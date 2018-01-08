@@ -2,7 +2,7 @@
 Assignment 3
 
 This folder contains code used for assignment 3, Vision and Image Processing.
-Group: Viktor Hargitai, Maud Ottenheijm and Bo Arlet.
+Group: Viktor Hargitai (lzm222), Maud Ottenheijm (cqw485) and Bo Arlet (tsl967).
 
 To run this code, open the main folder and run start.py.
 
