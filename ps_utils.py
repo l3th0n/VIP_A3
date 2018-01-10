@@ -26,7 +26,10 @@ import scipy.sparse as sp
 from scipy.sparse.linalg import spsolve
 from scipy.io import loadmat
 from matplotlib import pyplot as plt
-#from sys import version_info
+from sys import version_info
+if version_info >= (3,0):
+    xrange = range
+    
 
 # to use matplotlib or mayavi, uncomment/comment correspondingly
 BCKEND3D = 'matplotlib'
@@ -218,8 +221,8 @@ def unbiased_integrate(n1, n2, n3, mask, order=2):
         pbar = p.copy()
         qbar = q.copy()
     elif order == 2:
-        pbar = 0.5*(p + p[range(1,m) + [m-1], :])
-        qbar = 0.5*(q + q[:, range(1,n) + [n-1]])
+        pbar = 0.5*(p + p[list(range(1,m)) + [m-1], :])
+        qbar = 0.5*(q + q[:, list(range(1,n)) + [n-1]])
         
     # System
     I = []
