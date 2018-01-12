@@ -150,7 +150,7 @@ def simchony_integrate(n1, n2, n3, mask):
     Z = fs/denum
     Z[0,0] = 0.0 
     # or what Yvain proposed, it does not really matters
-    # Z[0,0] = Z[1,0] + Z[0,1]
+    #Z[0,0] = Z[1,0] + Z[0,1]
     
     z = fft.dct(Z, type=3, norm='ortho', axis=0)
     z = fft.dct(z, type=3, norm='ortho', axis=1)
