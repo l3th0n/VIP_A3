@@ -49,6 +49,7 @@ def get_3Dirty(filename):
 	# display albedo image with mask applied
 	p = p.reshape(shape[1],shape[2])
 	plt.imshow(p * mask, 'gray')
+	plt.axis('off')
 	plt.show()
 	
 	## SIMCHONY FUNCTION DOES NOT FUNCTION! Uncomment next two code lines to perform Simchony
@@ -73,10 +74,11 @@ def mask_that_boy():
 Dirty3 = get_3Dirty('Buddha.mat')
 
 # display 4 different rotations of Dirty3 in 2D
-#rotations = [Dirty3]
+rotations = [Dirty3]
 
-#for i in range(3):
-#    Dirty3 = np.rot90(Dirty3)
-#    rotations.append(Dirty3)
+for i in range(3):
+    Dirty3 = np.rot90(Dirty3)
+    rotations.append(Dirty3)
 
+# uncomment next line to display 2D representations of Dirty3
 #prints = [display_depth_matplotlib(img) for img in rotations]
