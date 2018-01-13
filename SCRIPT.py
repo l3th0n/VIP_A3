@@ -71,7 +71,7 @@ def mask_that_boy():
     return resized_images, resized_mask
 
 # call main function
-Dirty3 = get_3Dirty('Buddha.mat')
+Dirty3 = get_3Dirty('Beethoven.mat')
 
 # display 4 different rotations of Dirty3 in 2D
 rotations = [Dirty3]
