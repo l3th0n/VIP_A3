@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-def run_stereo_matching(img1, img2, windowsize = 11, cv = 0):
+def run_stereo_matching(img1, img2, windowsize = 11, limit = 8, cv = 0):
 	if cv == 1:		
 		pyramid_images_img1 = gaussian_pyramid_images_cv(img1)
 		pyramid_images_img2 = gaussian_pyramid_images_cv(img2)
@@ -11,7 +11,7 @@ def run_stereo_matching(img1, img2, windowsize = 11, cv = 0):
 		pyramid_images_img1 = gaussian_pyramid_images(img1)
 		pyramid_images_img2 = gaussian_pyramid_images(img2)
 
-	disparity_map = correspondence(pyramid_images_img1[3], pyramid_images_img2[3], windowsize, limit = 8)[1]
+	disparity_map = correspondence(pyramid_images_img1[3], pyramid_images_img2[3], windowsize, limit)[1]
 
 	imgs = []
 	imgs.append(disparity_map)
@@ -19,7 +19,7 @@ def run_stereo_matching(img1, img2, windowsize = 11, cv = 0):
 	for i in np.arange(3):
 		disparity_map = cv2.pyrUp(disparity_map)
 		disparity_map = np.multiply(disparity_map, 2)
-		disparity_map = correspondence_upscaled(pyramid_images_img1[2-i], pyramid_images_img2[2-i], disparity_map, windowsize)[1]
+		disparity_map = correspondence_upscaled(pyramid_images_img1[2-i], pyramid_images_img2[2-i], disparity_map, windowsize, limit)[1]
 		imgs.append(disparity_map)
 	
 	return np.array(imgs)
@@ -57,7 +57,7 @@ def hpatches(img1, img2, y, mode='intensity'):
     
     return patches1, patches2
 
-def correspondence(img1,img2, wsize = 5, limit = 25, mode='intensity'):
+def correspondence(img1,img2, wsize = 5, limit = 8, mode='intensity'):
 	start = time.clock() 
 	global windowsize
 	windowsize = wsize
@@ -83,11 +83,11 @@ def correspondence(img1,img2, wsize = 5, limit = 25, mode='intensity'):
 			besth = -999
 
 			r = [0, patches2.shape[0]]
-			rr = ish[1]//limit #limits search range
-			if x - rr > 0:
-				r[0] = x - rr
-			if x + rr < ish[1]:
-				r[1] = x + rr
+			
+			if x - limit > 0:
+				r[0] = x - limit
+			if x + limit < ish[1]:
+				r[1] = x + limit
 			for h in range(r[0],r[1]):
 				ncc = np.correlate(patches1[x]/length, patches2[h]) 
 				if ncc > best:
@@ -104,7 +104,7 @@ def correspondence(img1,img2, wsize = 5, limit = 25, mode='intensity'):
 # In[109]:
 
 
-def correspondence_upscaled(image1, image2, disparity, wsize, mode='intensity'):
+def correspondence_upscaled(image1, image2, disparity, wsize, limit = 8, mode='intensity'):
 	global windowsize
 	windowsize = wsize
 	global pad
@@ -141,12 +141,13 @@ def correspondence_upscaled(image1, image2, disparity, wsize, mode='intensity'):
 
 			r = [0, patches2.shape[0]]
 			
-			rr = int(abs(disp_map[y,x]))+1 #limits search range
+			rr = int(abs(disp_map[y,x])) #limits search range
+			x_new = x + rr
 			
-			if x - rr > 0:
-				r[0] = x - rr
-			if x + rr < ish[1]:
-				r[1] = x + rr
+			if x_new - limit > 0:
+				r[0] = x_new - limit
+			if x_new + limit < ish[1]:
+				r[1] = x_new + limit
 				
 			for h in range(r[0],r[1]):
 				ncc = np.correlate(patches1[x]/length, patches2[h]) 

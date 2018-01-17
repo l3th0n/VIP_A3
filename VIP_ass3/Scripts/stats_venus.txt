@@ -1,0 +1,31 @@
+VENUS
+
+STATISTICS FOR WINDOW SIZE  7 =
+Mean disparity error: -0.942215831839
+ Mean sqared error: 0.0372790651979
+Standard deviation of disparity error: 0.968970340582
+Number and fraction of large errors (error ≥ 3 pixels): 6821 0.041035482667757577
+
+STATISTICS FOR WINDOW SIZE  9 =
+Mean disparity error: -0.942215831839
+ Mean sqared error: 0.0372790651979
+Standard deviation of disparity error: 0.968970340582
+Number and fraction of large errors (error ≥ 3 pixels): 6821 0.041035482667757577
+
+STATISTICS FOR WINDOW SIZE  11 =
+Mean disparity error: -0.942215831839
+ Mean sqared error: 0.0372790651979
+Standard deviation of disparity error: 0.968970340582
+Number and fraction of large errors (error ≥ 3 pixels): 6821 0.041035482667757577
+
+STATISTICS FOR WINDOW SIZE  13 =
+Mean disparity error: -0.942215831839
+ Mean sqared error: 0.0372790651979
+Standard deviation of disparity error: 0.968970340582
+Number and fraction of large errors (error ≥ 3 pixels): 6821 0.041035482667757577
+
+STATISTICS FOR WINDOW SIZE  15 =
+Mean disparity error: -0.942215831839
+ Mean sqared error: 0.0372790651979
+Standard deviation of disparity error: 0.968970340582
+Number and fraction of large errors (error ≥ 3 pixels): 6821 0.041035482667757577

@@ -22,3 +22,4 @@ def tester(test_this, true_disp):
 	p = i/len(test)
 	
 	print("Number and fraction of large errors (error ≥ 3 pixels):", i, p)
+	return [mde, mse, stdev, i, p]
