@@ -89,7 +89,7 @@ def correspondence(img1,img2, wsize = 5, limit = 8, mode='intensity'):
 			if x + limit < ish[1]:
 				r[1] = x + limit
 			for h in range(r[0],r[1]):
-				ncc = np.correlate(patches1[x]/length, patches2[h]) 
+				ncc = np.correlate(patches1[x]/length, patches2[h])
 				if ncc > best:
 					best = ncc
 					besth =h

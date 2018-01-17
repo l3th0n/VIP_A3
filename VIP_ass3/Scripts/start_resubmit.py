@@ -33,7 +33,7 @@ book = xlwt.Workbook()
 
 window_sizes = [7,9,11,13,15]
 outcome = ["Mean disparity error", "Mean squared error", "Standard deviation of disparity error", "Nr of large errors", "Fraction of large errors"]
-margins = [1,3,5]
+margins = [10,3,15]
 
 
 
@@ -44,7 +44,7 @@ margins = [1,3,5]
 if img_title == "Tsukuba":
 	print(' ')
 	
-	for indexing, margin in enumerate(margins[0:1]):
+	for indexing, margin in enumerate(margins[1:2]):
 		sh = book.add_sheet("Tsukuba_%s" %margin)
 
 		for index, each in enumerate(window_sizes):
@@ -66,11 +66,11 @@ if img_title == "Tsukuba":
 			for ind, var in enumerate(vars):
 				sh.write(ind+1, index+1, var)
 		
-	print(' ')
-	print('Scale and save Tsubuka image')
-	scaling = np.max(disparity_map_tsu[3])
-	image_tsu = np.multiply(disparity_map_tsu[3], scaling)
-	cv2.imwrite('disparity_tsu_new.png',image_tsu)
+			print(' ')
+			print('Scale and save Tsubuka image')
+			scaling = np.max(disparity_map_tsu[3])
+			image_tsu = np.multiply(disparity_map_tsu[3], scaling)
+			cv2.imwrite('disparity_tsu_new_%s.png' %window_size,image_tsu)
 	
 if img_title == "Venus":
 	print('Start pyramidal stereo matching - Venus')

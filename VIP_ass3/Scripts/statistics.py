@@ -5,7 +5,7 @@ def tester(test_this, true_disp):
 	old_test_this = test_this
 	test_this = test_this/np.max(test_this)
 	true_disp = true_disp/np.max(true_disp)
-	test = ((test_this - true_disp) * np.max(old_test_this)).reshape(-1)
+	test = (abs(test_this - true_disp) * np.max(old_test_this)).reshape(-1)
 	mde = test.mean()
 	testsq = ((test_this - true_disp) ** 2).reshape(-1)
 	mse = testsq.mean()
