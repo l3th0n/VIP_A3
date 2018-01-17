@@ -44,7 +44,7 @@ margins = [10,3,15]
 if img_title == "Tsukuba":
 	print(' ')
 	
-	for indexing, margin in enumerate(margins[1:2]):
+	for indexing, margin in enumerate(margins):
 		sh = book.add_sheet("Tsukuba_%s" %margin)
 
 		for index, each in enumerate(window_sizes):
@@ -57,6 +57,9 @@ if img_title == "Tsukuba":
 			
 			print('Start pyramidal stereo matching - Tsukuba')
 			disparity_map_tsu = run_stereo_matching(img_01_tsu, img_02_tsu, windowsize = window_size, limit=margin)
+			
+			print('actual values:')
+			print(np.min(disparity_map_tsu[3]), np.max(disparity_map_tsu[3]))
 			
 			print('\n -------------------------------------- \n')
 			print('STATISTICS FOR WINDOW SIZE ', window_size, '=')
