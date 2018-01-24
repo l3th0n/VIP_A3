@@ -29,21 +29,17 @@ ground_venus = cv2.imread('venus/disp2.pgm', 0)
 print('What image do you want to use? ')
 img_title = input("-->")
 
-#book = xlwt.Workbook()
+book = xlwt.Workbook()
 
-window_sizes = [7,9,11,13,15]
+window_sizes = [9,11,13,15]
 outcome = ["Mean disparity error", "Mean squared error", "Standard deviation of disparity error", "Nr of large errors", "Fraction of large errors"]
-margins = [3,4,6]
+margins = [4,6]
 
-
-
-#print('What mode do you want to use? ')
-#modus = input("-->")
 
 if img_title == "Tsukuba":
 	print(' ')
 	
-	for indexing, margin in enumerate(margins):
+	for indexing, margin in enumerate(margins[0:1]):
 		sh = book.add_sheet("Tsukuba_%s" %margin)
 
 		for index, each in enumerate(window_sizes):
@@ -52,7 +48,7 @@ if img_title == "Tsukuba":
 		for index, every in enumerate(outcome):
 			sh.write(index+1, 0, every)
 		
-		for index, window_size in enumerate(window_sizes):
+		for index, window_size in enumerate(window_sizes[0:1]):
 			
 			print('Start pyramidal stereo matching - Tsukuba')
 			disparity_map_tsu = run_stereo_matching(img_02_tsu, img_01_tsu, windowsize = window_size, limit=margin)
@@ -70,6 +66,11 @@ if img_title == "Tsukuba":
 			scaling = np.max(disparity_map_tsu[3])
 			image_tsu = np.multiply(disparity_map_tsu[3], scaling)
 			cv2.imwrite('disparity_tsu_w%s_m%s.png' % (window_size, margin),image_tsu)
+			
+			for i in range(0,4):
+				scaling = np.max(disparity_map_tsu[i])
+				image_tsu = np.multiply(disparity_map_tsu[i], scaling)
+				cv2.imwrite('disparity_tsu_w%s_m%s_layer%s.png' % (window_size, margin, i),image_tsu)
 	
 if img_title == "Venus":
 	print(' ')
@@ -113,4 +114,4 @@ if img_title == "Map":
 print(' ')
 
 
-#book.save("stats_%s.xls" %img_title)
+book.save("stats_%s.xls" %img_title)

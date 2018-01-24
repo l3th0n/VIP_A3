@@ -1,7 +1,5 @@
 import numpy as np
 
-import numpy as np
-
 def tester(test_this, true_disp):
 	true_disp = true_disp/8
 	test = (test_this - true_disp).reshape(-1)
