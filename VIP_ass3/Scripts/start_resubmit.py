@@ -29,7 +29,7 @@ ground_venus = cv2.imread('venus/disp2.pgm', 0)
 print('What image do you want to use? ')
 img_title = input("-->")
 
-book = xlwt.Workbook()
+#book = xlwt.Workbook()
 
 window_sizes = [7,9,11,13,15]
 outcome = ["Mean disparity error", "Mean squared error", "Standard deviation of disparity error", "Nr of large errors", "Fraction of large errors"]
@@ -100,15 +100,17 @@ if img_title == "Venus":
 			print(' ')
 
 if img_title == "Map":
-	print(' ')
-	print('Start pyramidal stereo matching - Map')
-	disparity_map_map = run_stereo_matching(img_02_map, img_01_map, cv = 1)
+	for indexing, margin in enumerate(margins):
+		for index, window_size in enumerate(window_sizes):
+			print(' ')
+			print('Start pyramidal stereo matching - Map')
+			disparity_map_map = run_stereo_matching(img_02_map, img_01_map, window_size, margin, cv = 1)
 
-	print('Scale and save Map image')
-	scaling = np.max(disparity_map_map[3])
-	image_map = np.multiply(disparity_map_map[3], scaling)
-	cv2.imwrite('disparity_map_w%s_m%s.png' % (window_size, margin),image_map)
+			print('Scale and save Map image')
+			scaling = np.max(disparity_map_map[3])
+			image_map = np.multiply(disparity_map_map[3], scaling)
+			cv2.imwrite('disparity_map_w%s_m%s.png' % (window_size, margin),image_map)
 print(' ')
 
 
-book.save("stats_%s.xls" %img_title)
+#book.save("stats_%s.xls" %img_title)
