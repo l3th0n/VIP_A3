@@ -33,13 +33,12 @@ book = xlwt.Workbook()
 
 window_sizes = [7,9,11,13,15]
 outcome = ["Mean disparity error", "Mean squared error", "Standard deviation of disparity error", "Nr of large errors", "Fraction of large errors"]
-margins = [10,3,15]
+margins = [3,4,6]
 
 
 
-# print('What window size do you want to use? ')
-# window_size = input("-->")
-# window_size = int(window_size)
+#print('What mode do you want to use? ')
+#modus = input("-->")
 
 if img_title == "Tsukuba":
 	print(' ')
@@ -56,10 +55,7 @@ if img_title == "Tsukuba":
 		for index, window_size in enumerate(window_sizes):
 			
 			print('Start pyramidal stereo matching - Tsukuba')
-			disparity_map_tsu = run_stereo_matching(img_01_tsu, img_02_tsu, windowsize = window_size, limit=margin)
-			
-			print('actual values:')
-			print(np.min(disparity_map_tsu[3]), np.max(disparity_map_tsu[3]))
+			disparity_map_tsu = run_stereo_matching(img_02_tsu, img_01_tsu, windowsize = window_size, limit=margin)
 			
 			print('\n -------------------------------------- \n')
 			print('STATISTICS FOR WINDOW SIZE ', window_size, '=')
@@ -73,31 +69,45 @@ if img_title == "Tsukuba":
 			print('Scale and save Tsubuka image')
 			scaling = np.max(disparity_map_tsu[3])
 			image_tsu = np.multiply(disparity_map_tsu[3], scaling)
-			cv2.imwrite('disparity_tsu_new_%s.png' %window_size,image_tsu)
+			cv2.imwrite('disparity_tsu_w%s_m%s.png' % (window_size, margin),image_tsu)
 	
 if img_title == "Venus":
-	print('Start pyramidal stereo matching - Venus')
-	disparity_map_venus = run_stereo_matching(img_01_venus, img_02_venus, cv = 1)
-	
-	print('\n -------------------------------------- \n')
-	print('STATISTICS FOR WINDOW SIZE ', window_size, '=')
-	print(tester(disparity_map_venus[3], ground_venus))
-	print('\n -------------------------------------- \n')
-
-	print('Scale and save Venus image')
-	scaling = np.max(disparity_map_venus[3])
-	image_venus = np.multiply(disparity_map_venus[3], scaling)
-	cv2.imwrite('disparity_venus.png',image_venus)
 	print(' ')
+		
+	for indexing, margin in enumerate(margins[0:2]):
+		sh = book.add_sheet("Venus_%s" %margin)
+
+		for index, each in enumerate(window_sizes):
+			sh.write(0, index+1, each)
+
+		for index, every in enumerate(outcome):
+			sh.write(index+1, 0, every)
+		
+		for index, window_size in enumerate(window_sizes[0:3]):
+			
+			print('Start pyramidal stereo matching - Venus')
+			disparity_map_venus = run_stereo_matching(img_02_venus, img_01_venus, windowsize = window_size, limit=margin, cv = 1)
+			
+			print('\n -------------------------------------- \n')
+			print('STATISTICS FOR WINDOW SIZE ', window_sizes[0], '=')
+			print(tester(disparity_map_venus[3], ground_venus))
+			print('\n -------------------------------------- \n')
+
+			print('Scale and save Venus image')
+			scaling = np.max(disparity_map_venus[3])
+			image_venus = np.multiply(disparity_map_venus[3], scaling)
+			cv2.imwrite('disparity_venus_w%s_m%s.png' % (window_size, margin),image_venus)
+			print(' ')
+
 if img_title == "Map":
 	print(' ')
 	print('Start pyramidal stereo matching - Map')
-	disparity_map_map = run_stereo_matching(img_01_map, img_02_map, cv = 1)
+	disparity_map_map = run_stereo_matching(img_02_map, img_01_map, cv = 1)
 
 	print('Scale and save Map image')
 	scaling = np.max(disparity_map_map[3])
 	image_map = np.multiply(disparity_map_map[3], scaling)
-	cv2.imwrite('disparity_map.png',image_map)
+	cv2.imwrite('disparity_map_w%s_m%s.png' % (window_size, margin),image_map)
 print(' ')
 
 

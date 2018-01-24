@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import time
 
 def run_stereo_matching(img1, img2, windowsize = 11, limit = 8, cv = 0):
-	if cv == 1:		
+	if cv == 1:        
 		pyramid_images_img1 = gaussian_pyramid_images_cv(img1)
 		pyramid_images_img2 = gaussian_pyramid_images_cv(img2)
 	else:
@@ -15,13 +15,15 @@ def run_stereo_matching(img1, img2, windowsize = 11, limit = 8, cv = 0):
 
 	imgs = []
 	imgs.append(disparity_map)
-	
+
 	for i in np.arange(3):
 		disparity_map = cv2.pyrUp(disparity_map)
 		disparity_map = np.multiply(disparity_map, 2)
 		disparity_map = correspondence_upscaled(pyramid_images_img1[2-i], pyramid_images_img2[2-i], disparity_map, windowsize, limit)[1]
+		plt.imshow(disparity_map, 'gray')
+		plt.show()
 		imgs.append(disparity_map)
-	
+
 	return np.array(imgs)
 
 def pextract(img, y):
@@ -29,23 +31,35 @@ def pextract(img, y):
 	patches = np.empty_like(patches0)
 	for x in range(0, ish[1]):
 		a = img[y:y+windowsize,x:x+windowsize,:]
-		if modus == 'luminance':
-			a=(a[:,:,0]*0.3+a[:,:,1]*0.6+a[:,:,2]*0.1).reshape(length)
 		a=((a[:,:,0]+a[:,:,1]+a[:,:,2])/3).reshape(length)
 		patch = (a - np.mean(a)) / np.std(a)
 		patches[x] = patch
 	return patches
 
+def pextract_lum(img, y):
+	patch = np.empty_like(patch0)
+	patches = np.empty_like(patches0)
+	for x in range(0, ish[1]):
+		a = img[y:y+windowsize,x:x+windowsize,:]
+		a=(a[:,:,0]*0.3+a[:,:,1]*0.6+a[:,:,2]*0.1).reshape(length)
+		patch = (a - np.mean(a)) / np.std(a)
+		patches[x] = patch
+	return patches
 
-def hpatches(img1, img2, y):
+def hpatches(img1, img2, y, mode='intensity'):
 	padded1= cv2.copyMakeBorder(img1,pad,pad,pad,pad,cv2.BORDER_CONSTANT)
 	padded2= cv2.copyMakeBorder(img2,pad,pad,pad,pad,cv2.BORDER_CONSTANT)
 
-	patches1 = pextract(padded1, y)
-	patches2 = pextract(padded2, y)
+	if mode == 'intensity':
+		patches1 = pextract(padded1, y)
+		patches2 = pextract(padded2, y)
+	elif mode == 'luminance':
+		patches1 = pextract_lum(padded1, y)
+		patches2 = pextract_lum(padded2, y)
+
 	return patches1, patches2
 
-def correspondence(img1,img2, wsize = 5, limit = 8, mod='intensity'):
+def correspondence(img1,img2, wsize = 5, limit = 8, mode='intensity'):
 	start = time.clock() 
 	global windowsize
 	windowsize = wsize
@@ -61,27 +75,24 @@ def correspondence(img1,img2, wsize = 5, limit = 8, mod='intensity'):
 	patch0 = np.empty((windowsize,windowsize))
 	global patches0
 	patches0 = np.empty((psh[1]-windowsize+1, length))
-	global modus
-	modus = mod
-
 	result = np.zeros((ish[0], ish[1]))
 	result_nonsqrd = np.zeros((ish[0], ish[1]))
 	for y in range(ish[0]):
-		patches1, patches2 = hpatches(img1, img2, y)
+		patches1, patches2 = hpatches(img1, img2, y, mode)
 		for x in range(ish[1]):
 			#normalized cross-correlation
 			best = -999
 			besth = -999
-
+			###
 			r = [0, patches2.shape[0]]
 			
 			if x - limit > 0:
 				r[0] = x - limit
 			if x + limit < ish[1]:
 				r[1] = x + limit
-			
+			###    
 			for h in range(r[0],r[1]):
-				ncc = np.correlate(patches1[x]/length, patches2[h])
+				ncc = np.correlate(patches1[x]/length, patches2[h]) 
 				if ncc > best:
 					best = ncc
 					besth =h
@@ -94,7 +105,8 @@ def correspondence(img1,img2, wsize = 5, limit = 8, mod='intensity'):
 
 
 
-def correspondence_upscaled(image1, image2, disparity, wsize, limit = 8, mod='intensity'):
+
+def correspondence_upscaled(image1, image2, disparity, wsize, limit = 8, mode='intensity'):
 	global windowsize
 	windowsize = wsize
 	global pad
@@ -109,8 +121,6 @@ def correspondence_upscaled(image1, image2, disparity, wsize, limit = 8, mod='in
 	patch0 = np.empty((windowsize,windowsize))
 	global patches0
 	patches0 = np.empty((psh[1]-windowsize+1, length))
-	global modus
-	modus = mod
 
 	result = np.zeros((ish[0], ish[1]))
 	result_nonsqrd = np.zeros((ish[0], ish[1]))
@@ -120,38 +130,33 @@ def correspondence_upscaled(image1, image2, disparity, wsize, limit = 8, mod='in
 
 	disp_map = disparity
 
+		
 	start = time.clock() 
 
 	for y in range(ish[0]):
-		patches1, patches2 = hpatches(image1, image2, y)
+		patches1, patches2 = hpatches(image1, image2, y, mode)
 
 		for x in range(ish[1]):
 			#normalized cross-correlation
 			best = -999
 			besth = -999
-			
+			###
 			r = [0, patches2.shape[0]]
-			# rr = int(abs(disp_map[y,x]))+1
-			
-			# if x - rr > 0:
-				# r[0] = x - rr
-			# if x + rr < ish[1]:
-				# r[1] = x + rr
-
+			#print(r)
+			#rr = int(abs(disp_map[y,x]))+1 #limits search range
 			rr = limit
-			
+			#print(rr)  ####
 			z = int(x + disp_map[y,x])
-			
 			if z > ish[1]:
 				z = ish[1]
 			if z < 0:
 				z = 0
-			
 			if z - rr > 0 and z - rr < ish[1]:
 				r[0] = z - rr
 			if z + rr > 0 and z + rr < ish[1]:
 				r[1] = z + rr
-
+			#print(r)
+			###
 			for h in range(r[0],r[1]):
 				ncc = np.correlate(patches1[x]/length, patches2[h]) 
 
@@ -161,10 +166,14 @@ def correspondence_upscaled(image1, image2, disparity, wsize, limit = 8, mod='in
 			
 			result[y,x]=(x-besth)**2
 			result_nonsqrd[y,x]=abs(x-besth)
-
+			if abs(result_nonsqrd[y,x]) > 50:
+				print(x, z, r, rr, result_nonsqrd[y,x])
+	print(np.max(disp_map))
 	results.append(result)
 	results_nonsqrd.append(result_nonsqrd)
 
+
+	print(np.max(result_nonsqrd))
 	elapsed = time.clock()
 	elapsed = elapsed - start
 	print ("Done. Time spent executing correspondence: ", elapsed)
