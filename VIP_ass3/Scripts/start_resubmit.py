@@ -74,7 +74,7 @@ if img_title == "Tsukuba":
 if img_title == "Venus":
 	print(' ')
 		
-	for indexing, margin in enumerate(margins[0:2]):
+	for indexing, margin in enumerate(margins):
 		sh = book.add_sheet("Venus_%s" %margin)
 
 		for index, each in enumerate(window_sizes):
@@ -83,13 +83,13 @@ if img_title == "Venus":
 		for index, every in enumerate(outcome):
 			sh.write(index+1, 0, every)
 		
-		for index, window_size in enumerate(window_sizes[0:3]):
+		for index, window_size in enumerate(window_sizes):
 			
 			print('Start pyramidal stereo matching - Venus')
 			disparity_map_venus = run_stereo_matching(img_02_venus, img_01_venus, windowsize = window_size, limit=margin, cv = 1)
 			
 			print('\n -------------------------------------- \n')
-			print('STATISTICS FOR WINDOW SIZE ', window_sizes[0], '=')
+			print('STATISTICS FOR WINDOW SIZE ', window_size, '=')
 			print(tester(disparity_map_venus[3], ground_venus))
 			print('\n -------------------------------------- \n')
 
